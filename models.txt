@@ -1,0 +1,18 @@
+25
+rau
+He-4,C-12,O-16,Si-28,Ni-56
+testab.png
+#delta, mu, etc for element 1
+Ni-58*,Ni-60*,Ni-61*,Ni-62*,Ni-64*
+Ni-64*
+Ni-61*
+Ni-58*
+Ni-62*
+test1.png
+#delta, mu, etc for element 2
+Fe-54*,Fe-57*,Fe-58*
+Fe-57*,Fe-58*
+Fe-56*
+Fe-57*
+Fe-54*
+test2.png
