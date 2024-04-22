@@ -44,12 +44,22 @@ def get_profiles(fname,isotopes=["mg24"],presn=True,decayed=False):
        # need to decode binary isotope names to get strings
        isos=[ name.decode() for name in data["isotopes"] ]
        #find index jiso for isotope and get zonal mass fractions
+       #for iso in isotopes:
+       #    jiso=isos.index(iso)
+       #    if decayed and typ=="post-sn":
+       #       results[typ][iso]=data["mass_fractions_decayed"][:,jiso]
+       #    else:
+       #       results[typ][iso]=data["mass_fractions"][:,jiso]
        for iso in isotopes:
-           jiso=isos.index(iso)
-           if decayed and typ=="post-sn":
-              results[typ][iso]=data["mass_fractions_decayed"][:,jiso]
-           else:
-              results[typ][iso]=data["mass_fractions"][:,jiso]
+        try:
+            jiso=isos.index(iso)
+            if decayed and typ=="post-sn":
+                results[typ][iso]=data["mass_fractions_decayed"][:,jiso]
+            else:
+                results[typ][iso]=data["mass_fractions"][:,jiso]
+        except ValueError:
+            print('Sie18, missing isotope set to zero: ',iso); results[typ][iso] = np.zeros(len(mr))
+                
     return(results)
 
 
