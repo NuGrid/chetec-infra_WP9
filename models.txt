@@ -1,6 +1,6 @@
 15
 rit
-He-4,C-12, O-16,Si-28,Ni-56,Zn-70
+He-4,C-12, O-16,Si-28,K-40,Ni-56,Zn-70
 testab.png
 # comment useful here
 Zn-64*, Zn-66*,Zn-67*,Zn-68*,Zn-70*
@@ -17,6 +17,7 @@ O-16 / O-16
 N-14 / N-14
 Ne-20 / Ne-20
 Si-28 / Si-28
+K-40 / K-40
 Ni-56 / Ni-56
 Zn-64/Zn-64
 Zn-64,Ga-64,Ge-64,As-64,Se-64/Zn-64*
