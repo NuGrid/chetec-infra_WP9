@@ -521,6 +521,415 @@ def get_el_from_z(z):
     
     return (z_names[z])    
 
+
+
+# here there is the main loading function
+# function loading all the data from the models
+
+def load_stellar_data(data_dir,check_data_file,reqmass,iso_list,e_label):
+    if check_data_file == False:
+        #############################
+        # loading Ritter+18 model
+        #############################
+        fol2mod = data_dir+'R18/'
+        # load instances of models
+        # 15Msun
+        pt_15 = mp.se(fol2mod,'M15.0Z2.0e-02.Ma.0020601.out.h5',rewrite=True)
+        cyc_15 = pt_15.se.cycles[-1]
+        #pt_15.se.get('temperature')
+        t9_cyc_15  = pt_15.se.get(cyc_15,'temperature')
+        mass_15 = pt_15.se.get(cyc_15,'mass')
+        # 20Msun
+        pt_20 = mp.se(fol2mod,'M20.0Z2.0e-02.Ma.0021101.out.h5',rewrite=True)
+        cyc_20 = pt_20.se.cycles[-1]
+        #pt_20.se.get('temperature')
+        t9_cyc_20  = pt_20.se.get(cyc_20,'temperature')
+        mass_20 = pt_20.se.get(cyc_20,'mass')
+        # 25Msun
+        pt_25 = mp.se(fol2mod,'M25.0Z2.0e-02.Ma.0023601.out.h5',rewrite=True)
+        cyc_25 = pt_25.se.cycles[-1]
+        #pt_25.se.get('temperature')
+        t9_cyc_25  = pt_25.se.get(cyc_25,'temperature')
+        mass_25 = pt_25.se.get(cyc_25,'mass')
+        #################################################################################
+        # loading AGB models
+        # test case, M=3Msun, Z=0.03, Battino et al., getting only the last surf file
+        ################################################################################
+        pt_3 = mp.se(data_dir+'agb_surf_m3z2m3/','96101.surf.h5',rewrite=True)
+        ### ### ###
+        # loading Pignatari+16 model
+        fol2mod = data_dir+'P16/'
+        # load instances of models
+        # 15Msun
+        P16_15 = mp.se(fol2mod,'M15.0',rewrite=True)
+        cyc_P16_15 = P16_15.se.cycles[-1]
+        #pt_15.se.get('temperature')
+        t9_cyc_P16_15  = P16_15.se.get(cyc_P16_15,'temperature')
+        mass_P16_15 = P16_15.se.get(cyc_P16_15,'mass')
+        # 20Msun
+        P16_20 = mp.se(fol2mod,'M20.0',rewrite=True)
+        cyc_P16_20 = P16_20.se.cycles[-1]
+        #pt_20.se.get('temperature')
+        t9_cyc_P16_20  = P16_20.se.get(cyc_P16_20,'temperature')
+        mass_P16_20 = P16_20.se.get(cyc_P16_20,'mass')
+        # 25Msun
+        P16_25 = mp.se(fol2mod,'M25.0',rewrite=True)
+        cyc_P16_25 = P16_25.se.cycles[-1]
+        #pt_25.se.get('temperature')
+        t9_cyc_P16_25  = P16_25.se.get(cyc_P16_25,'temperature')
+        mass_P16_25 = P16_25.se.get(cyc_P16_25,'mass')
+        ### ### ###
+        ################################################
+        # Loading Lawson+22 
+        #################################################
+        dir_law = data_dir+'LAW22/'
+        models_list = ['M15s_run15f1_216M1.3bgl_mp.txt','M20s_run20f1_300M1.56jl_mp.txt','M25s_run25f1_280M1.83rrl_mp.txt']
+        num_species = 5209
+        
+        start_time = t.time()
+        numpart_all = []; massinc_all = []
+        anum_all = []; znum_all = []; x_all = []
+        iso_name_all = []; num_of_part_all = []
+        for i in models_list:
+            mass, numpart, number_of_parts, a, z, x, iso = load_lawson22(dir_law+i,num_species)
+            massinc_all.append(mass); num_of_part_all.append(number_of_parts); numpart_all.append(numpart) 
+            anum_all.append(a); znum_all.append(z); x_all.append(x); iso_name_all.append(iso)
+        
+        print_time("done with Lawson",start_time)
+        ### ### ### 
+        ##########################################
+        # dir where Sieverdin models are located
+        dir_sie = data_dir+'SIE18/'
+        file_sie_all = ["s15_data.hdf5","s20_data.hdf5","s25_data.hdf5"]
+        ########################################################################
+        ### ### ###
+        #########################################
+        # Rauscher 2002 
+        #############################
+        dir_rau = data_dir+'R02/'
+        
+        #models_rau = ['s15a28c.expl_yield']
+        models_rau = ['s15a28c.expl_yield','s20a28n.expl_yield','s25a28d.expl_yield']
+        
+        start_time = t.time()
+        
+        rau_mass = []; rau_isos = []; rau_x = []
+        for i in range(len(models_rau)):
+            filename = dir_rau+models_rau[i]
+            print(filename)
+            f = open(filename,'r')
+            head = f.readline(); isos_dum = head.split()[5:] # getting isotopes, not first header names
+            dum_a = [re.findall('\d+', ik)[0] for ik in isos_dum] # getting the A from isotope name
+            dum_el = [re.sub(r'[0-9]+', '', ik) for ik in isos_dum] # getting the element name from the isotope name
+            dum_new_iso = [dum_el[ik].capitalize()+'-'+dum_a[ik] for ik in range(len(isos_dum))]
+            rau_isos.append(dum_new_iso) # isotope name that we can use around, just neutron name is different, but not care
+            #
+            data = f.readlines()[:-2]                        # getting the all data, excepting the last two lines
+                                                  # done reading, just closing the file now
+            #
+            dum = [float(ii.split()[1])/1.989e+33 for ii in data]; rau_mass.append(dum) # converting in Msun too.
+            x_dum = []
+            
+            
+            data = [row.split()[3:] for row in data]
+            #
+            x_dum = np.transpose(data); x_dum = np.asfarray(x_dum,float)
+            print_time("x transpose and done",start_time)
+            rau_x.append(x_dum)
+        ### ### ### 
+        ########################
+        # data from LC18
+        ##########################
+        dir_lc18 = data_dir+'LC18/'
+    
+        models_lc18 = ['015a000.dif_iso_nod','020a000.dif_iso_nod','025a000.dif_iso_nod']
+        
+        skip_heavy_ = 43 # usedd to skip final ye and spooky abundances (see below)
+        
+        start_time = t.time()
+        
+        lc18_mass_1 = []; lc18_isos = []; lc18_x = []
+        for i in range(len(models_lc18)):
+            filename = dir_lc18+models_lc18[i]
+            print(filename)
+            f = open(filename,'r')
+            # getting isotopes, not first header names, and final ye and spooky abundances (group of isolated isotopes, 
+            # probably sorted with artificial reactions handling mass conservation or sink particles approach)
+            head = f.readline(); isos_dum = head.split()[4:-skip_heavy_] 
+            # correcting names to get H1 (and the crazy P and A)
+            isos_dum[0]=isos_dum[0]+'1'; isos_dum[1]=isos_dum[1]+'1'; isos_dum[6]=isos_dum[6]+'1' 
+            dum_a = [re.findall('\d+', ik)[0] for ik in isos_dum] # getting the A from isotope name
+            dum_el = [re.sub(r'[0-9]+', '', ik) for ik in isos_dum] # getting the element name from the isotope name
+            dum_new_iso = [dum_el[ik].capitalize()+'-'+dum_a[ik] for ik in range(len(isos_dum))]
+            lc18_isos.append(dum_new_iso) # isotope name that we can use around, just neutron name is different, but not care
+            #
+            data = f.readlines()[:-1]             # getting the all data, excepting the last fake line (bounch of zeros)
+                                                  # done reading, just closing the file now
+            #
+            dum = [float(ii.split()[0]) for ii in data]; lc18_mass_1.append(dum) # converting in Msun too.
+            x_dum = []
+            
+            
+            data = [row.split()[4:-skip_heavy_] for row in data]
+            #
+            x_dum = np.transpose(data); x_dum = np.asfarray(x_dum,float)
+            print_time("x transpose and done",start_time)
+            lc18_x.append(x_dum)
+        ### ### ### 
+        ####################################
+    # alright. The previous cells just need to be run once. Once you got instances for all the models,
+    # you are good to go with the analysis. 
+    # what of the three models I want for each flavour?
+    # this is the deck for the models
+    
+    
+    if reqmass not in [15, 20, 25]:
+        print("Error. You can choose only 15, 20, 25 solar mass")
+        exit()
+    
+    if reqmass == 15:
+        ind_ = 0
+    elif reqmass == 20:
+        ind_ = 1
+    elif reqmass == 25:
+        ind_ = 2
+    
+    
+    if check_data_file == False:
+        models = {
+            15: {
+                "r18_exp": pt_15,
+                "r18_cyc": cyc_15,
+                "r18_t9_cyc": t9_cyc_15,
+                "r18_mass": mass_15,
+                "p16_exp": P16_15,
+                "p16_cyc": cyc_P16_15,
+                "p16_t9_cyc": t9_cyc_P16_15,
+                "p16_mass": mass_P16_15
+            },
+            20: {
+                "r18_exp": pt_20,
+                "r18_cyc": cyc_20,
+                "r18_t9_cyc": t9_cyc_20,
+                "r18_mass": mass_20,
+                "p16_exp": P16_20,
+                "p16_cyc": cyc_P16_20,
+                "p16_t9_cyc": t9_cyc_P16_20,
+                "p16_mass": mass_P16_20
+            },
+            25: {
+                "r18_exp": pt_25,
+                "r18_cyc": cyc_25,
+                "r18_t9_cyc": t9_cyc_25,
+                "r18_mass": mass_25,
+                "p16_exp": P16_25,
+                "p16_cyc": cyc_P16_25,
+                "p16_t9_cyc": t9_cyc_P16_25,
+                "p16_mass": mass_P16_25
+            }
+        }
+    
+        # Ritter+18
+        r18_exp = models[reqmass]["r18_exp"]
+        r18_cyc = models[reqmass]["r18_cyc"]
+        r18_t9_cyc = models[reqmass]["r18_t9_cyc"]
+        r18_mass = models[reqmass]["r18_mass"]
+        
+        # Pignatari+16
+        p16_exp = models[reqmass]["p16_exp"]
+        p16_cyc = models[reqmass]["p16_cyc"]
+        p16_t9_cyc = models[reqmass]["p16_t9_cyc"]
+        p16_mass = models[reqmass]["p16_mass"]
+        
+        # lawson+22 # 0=15Msun; 1=20Msun; 2=25Msun
+        numpart = numpart_all[ind_]; la22_mass = massinc_all[ind_]
+        anum = anum_all[ind_]; znum = znum_all[ind_]; x = x_all[ind_]
+        iso_name = iso_name_all[ind_]; num_of_part = num_of_part_all[ind_]
+        
+        # sieverdin et al # 0=15Msun; 1=20Msun; 2=25Msun
+        file_sie = file_sie_all[ind_]
+        
+        # Rauscher+02 # 0=15Msun; 1=20Msun; 2=25Msun
+        rau02_mass = rau_mass[ind_]; rau02_abund_1 = rau_x[ind_]
+        rau_isos_1 = rau_isos[ind_]
+        
+        # Limongi & Chieffi 2018 # 0=15Msun; 1=20Msun; 2=25Msun
+        lc18_mass = lc18_mass_1[ind_]; lc18_x_1 = lc18_x[ind_]
+        lc18_isos_1 = lc18_isos[ind_]
+        
+        ################################
+        # Battino et al. -test case AGB
+        ###############################
+        sparsity_surf = 100
+        
+        pt_agb  = pt_3
+        time_ev = pt_3.se.ages[0::sparsity_surf]
+        print(len(time_ev))
+        ### ### ### 
+        ##############################################################################################
+        # getting mass and abundances for single isotopes, or single isotopes + radiogenic "by hand", 
+        # or elements by adding isotopes    
+        ###############################################################################################
+        # ritter+18
+        cyc_ = r18_cyc 
+        r18_mass = r18_exp.se.get(cyc_,'mass')
+        
+        # not loading the full arrays all the time, just once, and transposing around
+        dum_ab = np.transpose(r18_exp.se.get(cyc_,'iso_massf')); dum_iso = r18_exp.se.isotopes
+        
+        r18_abund = []
+        for i in iso_list:
+            #iso_abund = 0.; tmp = [r18_exp.se.get(cyc_,'iso_massf',ii) for ii in i]
+            iso_abund = 0.; tmp = func_species_deck('rit18',dum_ab,dum_iso,i)
+            iso_abund = [np.sum(tmp,axis = 0)][0]
+            r18_abund.append(iso_abund)
+            
+        r18_abund = np.array(r18_abund)
+        
+        # pignatari+16
+        cyc_ = p16_cyc 
+        p16_mass = p16_exp.se.get(cyc_,'mass')
+        
+        # not loading the full arrays all the time, just once, and transposing around
+        dum_ab = np.transpose(p16_exp.se.get(cyc_,'iso_massf')); dum_iso = p16_exp.se.isotopes
+        
+        p16_abund = []
+        for i in iso_list:
+            #iso_abund = 0.; tmp = [r18_exp.se.get(cyc_,'iso_massf',ii) for ii in i]
+            iso_abund = 0.; tmp = func_species_deck('p16',dum_ab,dum_iso,i)
+            iso_abund = [np.sum(tmp,axis = 0)][0]
+            p16_abund.append(iso_abund)
+            
+        p16_abund = np.array(p16_abund)
+        
+        
+        # Lawson+22
+        la22_abund = []
+        for j in iso_list:
+            tmp = []
+            for jj in j:
+                dum = [x[i][iso_name[i].index(jj)] for i in range(num_of_part)]
+                tmp.append(dum)
+            iso_abund = [np.sum(tmp,axis = 0)][0]
+            la22_abund.append(iso_abund)
+        
+        la22_abund = np.array(la22_abund)
+            
+        # Sieverdin+
+        flat = [x for sublist in iso_list for x in sublist]
+        iso_list_sie = [s.replace("-", "").lower() for s in flat]
+        #print(iso_list_sie)
+        results=get_profiles(dir_sie+file_sie,isotopes=iso_list_sie,decayed=False)    
+        
+        sie_abund = []
+        for i in iso_list:
+            iso_abund = 0.; tmp = [results["post-sn"][iso.replace("-", "").lower()] for iso in i]
+            iso_abund = [np.sum(tmp,axis = 0)][0]
+            sie_abund.append(iso_abund)
+        
+        sie_abund = np.array(sie_abund)
+            
+            
+        mass_sie = results["post-sn"]["mr"] # mass
+        
+        
+        # Rauscher+2002
+        rau02_abund = []
+        for j in iso_list:
+            #tmp = [rau02_abund_1[rau_isos_1.index(jj)] for jj in j]
+            tmp = func_species_deck('rau02',rau02_abund_1,rau_isos_1,j) 
+            #print(tmp)
+            rau_iso_abund = [np.sum(tmp,axis = 0)][0]
+            rau02_abund.append(rau_iso_abund)
+        
+        rau02_abund = np.array(rau02_abund)
+            
+        # LC+2018
+        lc18_abund = []
+        for j in iso_list:
+            #tmp = [lc18_x_1[lc18_isos_1.index(jj)] for jj in j]
+            tmp = func_species_deck('lc18',lc18_x_1,lc18_isos_1,j)
+            #print(tmp)
+            lc18_iso_abund = [np.sum(tmp,axis = 0)][0]
+            lc18_abund.append(lc18_iso_abund)
+        
+        lc18_abund = np.array(lc18_abund) 
+        ### ### ### 
+        ###############################
+        # AGB surf test
+        # not loading the full arrays all the time, just once, and transposing around
+        #dum_ab = np.transpose(pt_3.se.get('iso_massf')[0::sparsity_surf]); dum_iso = pt_3.se.isotopes
+        #dum_ab = [pt_3.se.get(int(dum_cyc),'iso_massf') for dum_cyc in pt_3.se.cycles[0::sparsity_surf]]
+        #
+        # oh no... issue in data written in surf files, some as arrays some as list(array(...)). Talk with Umberto, check
+        # mppnp revision (an oldy??) and dealing with allocatable arrays. So, just grabbing the last one, bah... 
+        #dum_ab = pt_3.se.get('iso_massf')[-1]
+        ccc = pt_agb.se.cycles[-1] ; dum_ab = pt_agb.se.get(ccc,'iso_massf')
+        dum_ab = np.array(dum_ab)
+        # ! *** !
+        # this is done to create from the single surf file a 2d array. This is temporary, since in give_ratio_gm there is a check
+        # assuming that there is more than 1 mass coordinate given in dilution/precision setup
+        dum_ab = np.stack((dum_ab,dum_ab), axis=0)
+        #
+        dum_iso = pt_agb.se.isotopes
+        
+        agb_abund = []
+        for i in iso_list:
+            #iso_abund = 0.; tmp = [pt_3.se.get(cyc_,'iso_massf',ii) for ii in i]
+            iso_abund = 0.; tmp = func_species_deck('bat20',np.transpose(dum_ab),dum_iso,i)
+            iso_abund = [np.sum(tmp,axis = 0)][0]
+            agb_abund.append(iso_abund)
+        agb_abund = np.array(agb_abund)
+        ### ### ### 
+        #################################################################################
+        # preparation for light mode version: write all abundances in an external file:
+        # notice the crazy array of lists to list... this is not needed, just to check to be able to write and read
+        # multiple times for testing, writing lists as strings and read arrays from strings in the cell below.
+        
+        data_pot= open('selected_abundances_data.txt','w')
+        
+        data_pot.write(datetime.date.today().strftime('%Y-%m-%d %H:%M:%S')+' file with selected species - light mode Marco'+'\n')
+        # list of species to check and labels
+        data_pot.write(str(iso_list)+' \n') # isotope list
+        data_pot.write(str(np.array(list(e_label)).tolist())+' \n')  # list for labels in plots
+        # rau02
+        data_pot.write(str(list(rau02_mass))+' \n')  # list of Rau02 mass coordinates
+        data_pot.write(str(np.array(list(rau02_abund)).tolist())+' \n')  # list of Rau02 abundances for given mass coordinates
+        # rit18
+        data_pot.write(str(np.array(list(r18_mass)).tolist())+' \n')  # list of Rit18 mass coordinates
+        data_pot.write(str(np.array(list(r18_abund)).tolist())+' \n')  # list of Rit18 abundances for given mass coordinates
+        # let's add some pain here... the temperature array to check the masscut in the processed ejecta
+        data_pot.write(str(np.array(list(r18_t9_cyc)).tolist())+' \n')
+        # pgn16
+        data_pot.write(str(np.array(list(p16_mass)).tolist())+' \n')  # list of Pgn16 mass coordinates
+        data_pot.write(str(np.array(list(p16_abund)).tolist())+' \n')  # list of Pgn16 abundances for given mass coordinates
+        # let's add some pain here... the temperature coordinate to check the processed ejecta
+        data_pot.write(str(np.array(list(p16_t9_cyc)).tolist())+' \n')
+        # law22
+        data_pot.write(str(np.array(list(la22_mass)).tolist())+' \n')  # list of Law22 mass coordinates
+        data_pot.write(str(np.array(list(la22_abund)).tolist())+' \n')  # list of Law22 abundances for given mass coordinates
+        # sie18
+        data_pot.write(str(np.array(list(mass_sie)).tolist())+' \n')  # list of Sie18 mass coordinates
+        data_pot.write(str(np.array(list(sie_abund)).tolist())+' \n')  # list of Sie18 abundances for given mass coordinates
+        # LC18
+        data_pot.write(str(np.array(list(lc18_mass)).tolist())+' \n')  # list of LC18 mass coordinates
+        data_pot.write(str(np.array(list(lc18_abund)).tolist())+' \n')  # list of LC18 abundances for given mass coordinates
+        # bat20
+        data_pot.write(str(np.array(list(agb_abund)).tolist())+' \n')  # list of Bat20 abundances for the surface (final step)
+        
+        
+        
+        data_pot.close()
+        
+        return()
+ 
+   
+    
+        
+        
+    
+
+
 #def func_el_corr(whatever, abu, ref_up, ref_down, mode=0,file_fractionation=None,what_in_file=None):
 #    """Documentation: 
 #    # mode = 0: c= (ref_EL1_el2/ref_el1_EL2)_sun/(ref_EL1_el2/ref_el1_EL2)_sun = 1. Same without correction factor;
