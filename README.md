@@ -33,6 +33,7 @@ If interested to help, please get in touch with me (mpignatari@gmail.com)
 
 ## Authors 
 [Marco Pignatari](https://konkoly.hu/munkatarsak/pignatari-marco)
+
 [Matthias Ek](https://eaps.ethz.ch/en/people/profile.MTkyMTc0.TGlzdC83NzMsOTI0MjA1OTI2.html)
 
 ## Acknowledgment
