@@ -920,7 +920,7 @@ def load_stellar_data(data_dir,check_data_file,reqmass,iso_list,e_label):
         
         
         data_pot.close()
-        
+        print('All models loaded')
         return()
  
    
@@ -975,3 +975,381 @@ def load_stellar_data(data_dir,check_data_file,reqmass,iso_list,e_label):
 #    
 #    return(whatever_corrected)
 #
+
+# utility function to generate automatically CCSN ejecta zone structure in abundance plots (e.g., mass fractions vs mass coordinates). see e.g., Meyer+ 1995
+def structure(all_models, reqmass, rmodels, y2):
+
+    #'Ri18', 'Pi16', 'La22', 'Si18', 'LC18', 'Ra02'
+    if 'pgn' in rmodels:
+        mass = all_models['Pi16'][reqmass]['masscoord']
+        he4  = all_models['Pi16'][reqmass]['abu']['He-4']
+        c12  = all_models['Pi16'][reqmass]['abu']['C-12'] 
+        ne20 = all_models['Pi16'][reqmass]['abu']['Ne-20'] 
+        o16  = all_models['Pi16'][reqmass]['abu']['O-16'] 
+        si28 = all_models['Pi16'][reqmass]['abu']['Si-28'] 
+        n14  = all_models['Pi16'][reqmass]['abu']['N-14'] 
+        ni56 = all_models['Pi16'][reqmass]['abu']['Ni-56'] 
+        masscut = mass[0]
+        massmax = mass[-1]
+        print("m_cut: "+str(masscut))
+        print("massmax: "+str(massmax))
+    if 'sie' in rmodels:
+        mass = all_models['Si18'][reqmass]['masscoord']
+        he4  = all_models['Si18'][reqmass]['abu']['He-4']
+        c12  = all_models['Si18'][reqmass]['abu']['C-12'] 
+        ne20 = all_models['Si18'][reqmass]['abu']['Ne-20'] 
+        o16  = all_models['Si18'][reqmass]['abu']['O-16'] 
+        si28 = all_models['Si18'][reqmass]['abu']['Si-28'] 
+        n14  = all_models['Si18'][reqmass]['abu']['N-14'] 
+        ni56 = all_models['Si18'][reqmass]['abu']['Ni-56'] 
+
+        masscut = mass[0]
+        massmax = mass[-1]
+        print("m_cut: "+str(masscut))
+        print("massmax: "+str(massmax))
+    if 'rau' in rmodels:
+        mass = all_models['Ra02'][reqmass]['masscoord']
+        he4  = all_models['Ra02'][reqmass]['abu']['He-4']
+        c12  = all_models['Ra02'][reqmass]['abu']['C-12'] 
+        ne20 = all_models['Ra02'][reqmass]['abu']['Ne-20'] 
+        o16  = all_models['Ra02'][reqmass]['abu']['O-16'] 
+        si28 = all_models['Ra02'][reqmass]['abu']['Si-28'] 
+        n14  = all_models['Ra02'][reqmass]['abu']['N-14'] 
+        ni56 = all_models['Ra02'][reqmass]['abu']['Ni-56'] 
+
+        masscut = mass[0]
+        massmax = mass[-1]
+        print("m_cut: "+str(masscut))
+        print("massmax: "+str(massmax))
+    if 'lc' in rmodels:
+        mass = all_models['LC18'][reqmass]['masscoord']
+        he4  = all_models['LC18'][reqmass]['abu']['He-4']
+        c12  = all_models['LC18'][reqmass]['abu']['C-12'] 
+        ne20 = all_models['LC18'][reqmass]['abu']['Ne-20'] 
+        o16  = all_models['LC18'][reqmass]['abu']['O-16'] 
+        si28 = all_models['LC18'][reqmass]['abu']['Si-28'] 
+        n14  = all_models['LC18'][reqmass]['abu']['N-14'] 
+        ni56 = all_models['LC18'][reqmass]['abu']['Ni-56'] 
+
+        masscut = mass[0]
+        massmax = mass[-1]
+        print("m_cut: "+str(masscut))
+        print("massmax: "+str(massmax))
+    if 'law' in rmodels:
+        mass = all_models['La22'][reqmass]['masscoord']
+        he4  = all_models['La22'][reqmass]['abu']['He-4']
+        c12  = all_models['La22'][reqmass]['abu']['C-12'] 
+        ne20 = all_models['La22'][reqmass]['abu']['Ne-20'] 
+        o16  = all_models['La22'][reqmass]['abu']['O-16'] 
+        si28 = all_models['La22'][reqmass]['abu']['Si-28'] 
+        n14  = all_models['La22'][reqmass]['abu']['N-14'] 
+        ni56 = all_models['La22'][reqmass]['abu']['Ni-56'] 
+        masscut = mass[0]
+        massmax = mass[-1]
+        print("m_cut: "+str(masscut))
+        print("massmax: "+str(massmax))
+    if 'rit' in rmodels:
+        mass = all_models['Ri18'][reqmass]['masscoord']
+        he4  = all_models['Ri18'][reqmass]['abu']['He-4']
+        c12  = all_models['Ri18'][reqmass]['abu']['C-12'] 
+        ne20 = all_models['Ri18'][reqmass]['abu']['Ne-20'] 
+        o16  = all_models['Ri18'][reqmass]['abu']['O-16'] 
+        si28 = all_models['Ri18'][reqmass]['abu']['Si-28'] 
+        n14  = all_models['Ri18'][reqmass]['abu']['N-14'] 
+        ni56 = all_models['Ri18'][reqmass]['abu']['Ni-56']
+        masscut = mass[0]
+        massmax = mass[-1]
+        print("m_cut: "+str(masscut))
+        print("massmax: "+str(massmax))
+    
+
+    # definition of borders
+    ih = np.where((he4 > 0.5))[0][-1]
+    print("Lower boundary of the H shell: "+str(mass[ih]))
+
+    #ihe1 = np.where((n14 < o16) & (n14 < c12) & (n14 < 1.e-3))[0][-1]
+    ihe1 = np.where((n14 > o16) & (n14 > c12) & (n14 > 1.e-3))[0][0]
+    print("Lower boundary of the He/N shell: "+str(mass[ihe1]))
+
+    ihe = np.where((c12 > he4) & (mass <= mass[ih]))[0][-1]
+    print("Lower boundary of the He/C shell: "+str(mass[ihe]))
+
+    #ic2 = np.where((c12 > 1.e-1)&(c12 > ne20))[0][0]
+    ic2 = np.where((c12 > ne20)&(si28<c12)&(c12> 8.e-2))[0][0]
+    print("Lower boundary of the O/C shell: "+str(mass[ic2]))
+
+    #ine = np.where((ne20 > 1.e-3) & (si28 < ne20) & (ne20 > c12) & (mass > masscut))[0][0]
+    ine = np.where((ne20 > 1.e-3) & (si28 < ne20) & (ne20 > c12))[0][0]
+    if ine>ic2:
+        ine=ic2
+    print("Lower boundary of the O/Ne shell: "+str(mass[ine]))
+
+    #io = np.where((he4 < 1.e-3) & (c12 < 5.e-3) & (ne20 < 5.e-3) & (o16 < 5.e-3))[0][-1]
+    #io = np.where((si28 < o16)& (o16 > 5.e-3) & (mass > masscut))[0][0]
+    io = np.where((si28 < o16) & (o16 > 5.e-3))[0][0]
+    #io = np.where((si28 < o16) & (mass > masscut))[0][0]
+    print("Lower boundary of the O/Si layer: "+str(mass[io]))
+
+    try:
+        isi = np.where((ni56 > si28))[0][-1]
+        print("Lower boundary of the Si layer: "+str(mass[isi]))
+    except IndexError:
+        isi=0
+        print("No lower boundary of Si layer")
+    
+    try:
+        ini = np.where((ni56 > si28) & (mass > masscut))[0][0]
+        print("Lower boundary of the Ni layer: "+str(mass[ini]))
+    except IndexError:
+        ini=0.2
+        print("No Ni layer")
+
+    # plot limits
+    xl1 = masscut-0.25
+    xl2 = np.round(massmax,1)
+    
+    #remnant
+    plt.gca().axvline(x = masscut, color = 'black', linestyle = ':',lw=2, alpha=0.75)
+    plt.gca().text((((xl1+masscut)/2)), y2+0.3,r'M$_{\rm rem}$',fontsize=10.,color='black',horizontalalignment='center')
+    plt.gca().fill_between([xl1,masscut],[-1.e10,-1.e10],[1.e10,1.e10],color='gray',alpha=0.5)
+    
+    #Convective envelope
+    if mass[ih]+1<massmax:
+        xl2=np.round(mass[ih]+0.5,1)
+        plt.gca().axvline(x = mass[ih], color = 'black', linestyle = '--',lw=2, alpha=0.75)
+        plt.gca().fill_between([mass[ih],xl2],[-1.e10,-1.e10],[1.e10,1.e10],color='lightblue',alpha=0.25)
+        if np.round(mass[ih],2)!=np.round(massmax,2):
+            plt.gca().text((((mass[ih]+xl2)/2)), y2+0.3,'H',fontsize=10.,color='black',horizontalalignment='center')
+            
+    #He/N layer
+    if mass[ihe]+0.05<massmax:
+        plt.gca().axvline(x = mass[ihe], color = 'black', linestyle = '--',lw=2, alpha=0.75)
+        if mass[ih]==massmax:
+            xl2=np.round(mass[ihe1]+0.5)
+            plt.gca().text((((int(xl2)+mass[ihe1])/2)), y2+0.3,'He/N',fontsize=10.,color='black',horizontalalignment='center')
+        else:
+            plt.gca().text((((mass[ih]+mass[ihe1])/2)), y2+0.3,'He/N',fontsize=10.,color='black',horizontalalignment='center')
+    
+    #He/C layer
+    if mass[ihe1]+0.05<massmax:
+        plt.gca().axvline(x = mass[ihe1], color = 'black', linestyle = '--',lw=2, alpha=0.75)
+        plt.gca().text((((mass[ihe]+mass[ihe1])/2)), y2+0.3,'He/C',fontsize=10.,color='black',horizontalalignment='center')
+        if mass[ih]+0.05>massmax and mass[ihe]+0.05<massmax:
+            xl2=np.round(mass[ihe1]+0.5,1)
+            plt.gca().text((((mass[int(xl2)]+mass[ic2])/2)), y2+0.3,'He/C',fontsize=10.,color='black',horizontalalignment='center')
+    
+    plt.gca().axvline(x = mass[ic2], color = 'black', linestyle = '--',lw=2, alpha=0.75)
+    
+    #merger
+    #max_value = max([mass[ic2], masscut, mass[ine]])
+    if np.abs(mass[ic2]-mass[ine])>0.05:
+        plt.gca().axvline(x = mass[ine], color = 'black', linestyle = '--',lw=2, alpha=0.75)
+        plt.gca().text((((mass[ic2]+max(mass[ine],masscut))/2)), y2+0.3,'O/Ne',fontsize=10.,color='black',horizontalalignment='center')
+        plt.gca().fill_between([max(mass[ine],masscut),mass[ic2]],[-1.e10,-1.e10],[1.e10,1.e10],color='lightblue',alpha=0.25)
+    
+    plt.gca().axvline(x = mass[io], color = 'black', linestyle = '--',lw=2, alpha=0.75)
+    plt.gca().axvline(x = mass[isi], color = 'black', linestyle = '--',lw=2, alpha=0.75)
+    
+    plt.gca().fill_between([mass[ihe],mass[ihe1]],[-1.e10,-1.e10],[1.e10,1.e10],color='lightblue',alpha=0.25)
+
+    
+    plt.gca().text((((max(mass[ic2],masscut)+mass[ihe])/2)), y2+0.3,'O/C',fontsize=10.,color='black',horizontalalignment='center')
+        
+    if(mass[io]>masscut and mass[io]-masscut>0.05):
+        plt.gca().text((((mass[ine]+mass[io])/2)), y2+0.3,'O/Si',fontsize=10.,color='black',horizontalalignment='center')
+    elif (mass[ine]-masscut>0.05):
+        plt.gca().text((((mass[ine]+masscut)/2)), y2+0.3,'O/Si',fontsize=10.,color='black',horizontalalignment='center')
+    
+    #Si layer
+    if(mass[io]>masscut):
+        if(mass[isi]>masscut):
+            plt.gca().text((((mass[io]+mass[isi])/2)), y2+0.3,'Si',fontsize=10.,color='black',horizontalalignment='center')
+            plt.gca().fill_between([mass[isi],mass[io]],[-1.e10,-1.e10],[1.e10,1.e10],color='lightblue',alpha=0.25) #silicon
+        elif (mass[io]-masscut>0.05):
+            plt.gca().text((((mass[io]+masscut)/2)), y2+0.3,'Si',fontsize=10.,color='black',horizontalalignment='center')
+            plt.gca().fill_between([mass[io],masscut],[-1.e10,-1.e10],[1.e10,1.e10],color='lightblue',alpha=0.25) #silicon
+    
+    #Ni layer
+    if(mass[isi]>masscut):
+        plt.gca().text((((mass[ini]+mass[isi])/2)), y2+0.3,'Ni',fontsize=10.,color='black',horizontalalignment='center')
+        
+        
+    return(xl1,xl2)        
+
+
+#
+# function generating a figure with abundance (in mass fractions) of selected isotopes vs mass fractions, using the function structure.
+#
+def abundanceplot(e_label, rmodels, iso_selected, reqmass, all_models, title_abundance_plot, col, lin, x1=1, x2=10, y1=1e-10, y2=1, \
+                  xlabel="Mass coordinate M$_{\odot}$", ylabel="Mass fraction", legendpos='outside',\
+                  grid=0, abu_name='nosave', onion=True):
+    
+
+    from matplotlib.ticker import AutoMinorLocator
+    from matplotlib.ticker import MultipleLocator
+    from matplotlib.ticker import LogLocator
+
+    e_label_split = [iso.split("-") for iso in e_label]
+    title = title_abundance_plot
+    
+    ifig=plt.figure(figsize=(9,6))
+    #'Ri18', 'Pi16', 'La22', 'Si18', 'LC18', 'Ra02'
+    if 'pgn' in rmodels:
+        c=0
+        for i in range(len(iso_selected)):
+            label_text = "PGN"+str(reqmass)+" "+ str(e_label_split[i][0])+str(e_label_split[i][1])
+            plt.semilogy(all_models['Pi16'][reqmass]['masscoord'],all_models['Pi16'][reqmass]['abu'][iso_selected[i]],marker=lin,\
+                         color=col[c], markersize=0.5, ls='-', label=label_text)
+            c += 1
+    if 'sie' in rmodels:
+        c=0
+        for i in range(len(iso_selected)):
+            label_text = "SIE"+str(reqmass)+" "+ str(e_label_split[i][0])+str(e_label_split[i][1])
+            plt.semilogy(all_models['Si18'][reqmass]['masscoord'],all_models['Si18'][reqmass]['abu'][iso_selected[i]], color=col[c], marker=lin,\
+                         ls='-', markersize=0.5, alpha=0.95, label=label_text)
+            c += 1
+    if 'rau' in rmodels:
+        c=0
+        for i in range(len(iso_selected)):
+            label_text = "RAU"+str(reqmass)+", "+ str(e_label_split[i][0])+str(e_label_split[i][1])
+            plt.semilogy(all_models['Ra02'][reqmass]['masscoord'],all_models['Ra02'][reqmass]['abu'][iso_selected[i]], color=col[c], marker=lin,\
+                         ls='-', markersize=0.5, alpha=1, label=label_text)
+            c += 1
+    if 'lc' in rmodels:
+        c=0
+        for i in range(len(iso_selected)):
+            label_text = "LC"+str(reqmass)+" "+ str(e_label_split[i][0])+str(e_label_split[i][1])
+            plt.semilogy(all_models['LC18'][reqmass]['masscoord'],all_models['LC18'][reqmass]['abu'][iso_selected[i]], color=col[c], marker=lin,\
+                         ls='-', markersize=0.5, alpha=0.95, label=label_text)
+            c += 1
+    if 'law' in rmodels:
+        c=0
+        for i in range(len(iso_selected)):
+            label_text = "LAW"+str(reqmass)+" "+ str(e_label_split[i][0])+str(e_label_split[i][1])
+            plt.semilogy(all_models['La22'][reqmass]['masscoord'],all_models['La22'][reqmass]['abu'][iso_selected[i]], color=col[c], marker=lin,\
+                         ls='-', markersize=0.5, alpha=0.5, label=label_text)
+            c += 1
+    if 'rit' in rmodels:
+        c=0
+        for i in range(len(iso_selected)):
+            label_text = "RIT"+str(reqmass)+" "+ str(e_label_split[i][0])+str(e_label_split[i][1])
+            plt.semilogy(all_models['Ri18'][reqmass]['masscoord'],all_models['Ri18'][reqmass]['abu'][iso_selected[i]], color=col[c], marker=lin,\
+                         markersize=0.5, ls='-', label=label_text)
+            c += 1
+    
+    plt.grid(alpha=grid)
+    plt.xlabel(xlabel,fontweight='bold', fontsize=17)
+    plt.ylabel(ylabel,fontweight='bold', fontsize=17)
+    plt.tick_params(left=True,right=True,top=True,labelleft=True,which='both')
+    plt.title(title,fontweight='bold', fontsize=17, y=1.05)
+
+    plt.gca().xaxis.set_minor_locator(AutoMinorLocator())
+    plt.gca().yaxis.set_major_locator(LogLocator(subs=(1.0, ),numticks=999))
+    plt.gca().yaxis.set_minor_locator(LogLocator(numticks=999, subs='auto'))
+    
+    if onion==True:
+        xl1,xl2 = structure(all_models, reqmass, rmodels, y2)
+        plt.xlim(xl1,xl2)
+    else:
+        plt.xlim(x1,x2)
+    
+    plt.ylim(y1,y2)
+
+    if legendpos=='outside':
+        plt.legend(bbox_to_anchor=(1.05, 0), loc="lower left", borderaxespad=0)
+    else:
+        plt.legend()
+
+    if abu_name != 'nosave':
+        plt.savefig(abu_name, bbox_inches='tight', pad_inches=0.1,dpi=300)
+
+    plt.show()
+    return()
+
+
+
+#
+# function generating a figure with slopes of selected ratios, using the function structure.
+#
+def ratioplot(rmodels, iso_selected, reqmass, all_models, ylabel, title, col, lin, x1=1 ,x2=10 ,y1=-15 ,y2=25, xlabel="Mass coordinate M$_{\odot}$",legendpos="inside",\
+              grid=0,ratio_name="nosave", onion=True):
+    
+    from matplotlib.ticker import AutoMinorLocator
+    from matplotlib.ticker import MultipleLocator
+    from matplotlib.ticker import LogLocator
+
+    ifig2=plt.figure(figsize=(10,6))
+        
+    #'Ri18', 'Pi16', 'La22', 'Si18', 'LC18', 'Ra02'
+    if 'pgn' in rmodels:
+        c=0
+        for i in range(len(iso_selected)):
+            label_text = "PGN"+str(reqmass)+" "+ str(iso_selected[i])
+            plt.plot(all_models['Pi16'][reqmass]['masscoord'],all_models['Pi16'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
+                     ls='-', markersize=0.8, alpha=0.5, label=label_text)
+            c += 1
+    if 'sie' in rmodels:
+        c=0
+        for i in range(len(iso_selected)):
+            label_text = "SIE"+str(reqmass)+" "+ str(iso_selected[i])
+            plt.plot(all_models['Si18'][reqmass]['masscoord'],all_models['Si18'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
+                     ls='-', markersize=0.8, alpha=0.5, label=label_text)
+            c += 1
+    if 'rau' in rmodels:
+        c=0
+        for i in range(len(iso_selected)):
+            label_text = "RAU"+str(reqmass)+" "+ str(iso_selected[i])
+            plt.plot(all_models['Ra02'][reqmass]['masscoord'],all_models['Ra02'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
+                     ls='-', markersize=0.8, alpha=0.5, label=label_text)
+            c += 1
+    if 'lc' in rmodels:
+        c=0
+        for i in range(len(iso_selected)):
+            label_text = "LC"+str(reqmass)+" "+ str(iso_selected[i])
+            plt.plot(all_models['LC18'][reqmass]['masscoord'],all_models['LC18'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
+                     ls='-', markersize=0.8, alpha=0.5, label=label_text)
+            c += 1
+    if 'law' in rmodels:
+        c=0
+        for i in range(len(iso_selected)):
+            label_text = "LAW"+str(reqmass)+" "+ str(iso_selected[i])
+            plt.plot(all_models['La22'][reqmass]['masscoord'],all_models['La22'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
+                     ls='-', markersize=0.8, alpha=0.5, label=label_text)
+            c += 1
+    if 'rit' in rmodels:
+        c=0
+        for i in range(len(iso_selected)):
+            label_text = "RIT"+str(reqmass)+" "+ str(iso_selected[i])
+            plt.plot(all_models['Ri18'][reqmass]['masscoord'],all_models['Ri18'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
+                     ls='-', markersize=0.8, alpha=0.5, label=label_text)
+            c += 1
+            
+    #plt.hlines(3.003,x1,x2)
+    #x = np.linspace(x1, x2, 100)
+    #plt.fill_between(x, 3.003-0.166, 3.003+0.166, color='lightblue', alpha=0.5)
+    
+    plt.grid(alpha=grid)
+    plt.xlabel(xlabel, fontsize=17)
+    plt.ylabel(ylabel, fontsize=17)
+    plt.ylim(y1,y2)
+    plt.tick_params(left=True,right=True,top=True,labelleft=True,which='both') #,labelright=True)
+    plt.title(title,fontweight='bold', fontsize=17, y=1.05)
+
+    plt.gca().xaxis.set_minor_locator(AutoMinorLocator())
+    plt.gca().yaxis.set_minor_locator(AutoMinorLocator())
+    
+    if onion==True:
+        xl1,xl2 = structure(all_models, reqmass, rmodels, y2)
+        plt.xlim(xl1,xl2)
+    else:
+        plt.xlim(x1,x2)
+
+    if legendpos=='outside':
+        plt.legend(bbox_to_anchor=(1.05, 0), loc="lower left", borderaxespad=0)
+    else:
+        plt.legend()
+
+    if ratio_name != "nosave":
+        plt.savefig(ratio_name, bbox_inches='tight', pad_inches=0.1,dpi=300)
+
+    plt.show()
