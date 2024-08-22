@@ -1180,7 +1180,7 @@ def structure(all_models, reqmass, rmodels, y2):
 #
 # function generating a figure with abundance (in mass fractions) of selected isotopes vs mass fractions, using the function structure.
 #
-def abundanceplot(e_label, rmodels, iso_selected, reqmass, all_models, title_abundance_plot, col, lin, x1=1, x2=10, y1=1e-10, y2=1, \
+def abundanceplot(rmodels, iso_selected, reqmass, all_models, title_abundance_plot, col, lin, x1=1, x2=10, y1=1e-10, y2=1, \
                   xlabel="Mass coordinate M$_{\odot}$", ylabel="Mass fraction", legendpos='outside',\
                   grid=0, abu_name='nosave', onion=True):
     
@@ -1189,7 +1189,7 @@ def abundanceplot(e_label, rmodels, iso_selected, reqmass, all_models, title_abu
     from matplotlib.ticker import MultipleLocator
     from matplotlib.ticker import LogLocator
 
-    e_label_split = [iso.split("-") for iso in e_label]
+    e_label_split = [iso.split("-") for iso in iso_selected]
     title = title_abundance_plot
     
     ifig=plt.figure(figsize=(9,6))
@@ -1271,7 +1271,7 @@ def abundanceplot(e_label, rmodels, iso_selected, reqmass, all_models, title_abu
 #
 # function generating a figure with slopes of selected ratios, using the function structure.
 #
-def ratioplot(rmodels, iso_selected, reqmass, all_models, ylabel, title, col, lin, x1=1 ,x2=10 ,y1=-15 ,y2=25, xlabel="Mass coordinate M$_{\odot}$",legendpos="inside",\
+def ratioplot(rmodels, iso_selected, reqmass, all_models, ylabel, label_for_legend, title, col, lin, x1=1 ,x2=10 ,y1=-15 ,y2=25, xlabel="Mass coordinate M$_{\odot}$",legendpos="inside",\
               grid=0,ratio_name="nosave", onion=True):
     
     from matplotlib.ticker import AutoMinorLocator
@@ -1284,42 +1284,42 @@ def ratioplot(rmodels, iso_selected, reqmass, all_models, ylabel, title, col, li
     if 'pgn' in rmodels:
         c=0
         for i in range(len(iso_selected)):
-            label_text = "PGN"+str(reqmass)+" "+ str(iso_selected[i])
+            label_text = "PGN"+str(reqmass)+" "+ str(label_for_legend[i])
             plt.plot(all_models['Pi16'][reqmass]['masscoord'],all_models['Pi16'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
                      ls='-', markersize=0.8, alpha=0.5, label=label_text)
             c += 1
     if 'sie' in rmodels:
         c=0
         for i in range(len(iso_selected)):
-            label_text = "SIE"+str(reqmass)+" "+ str(iso_selected[i])
+            label_text = "SIE"+str(reqmass)+" "+ str(label_for_legend[i])
             plt.plot(all_models['Si18'][reqmass]['masscoord'],all_models['Si18'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
                      ls='-', markersize=0.8, alpha=0.5, label=label_text)
             c += 1
     if 'rau' in rmodels:
         c=0
         for i in range(len(iso_selected)):
-            label_text = "RAU"+str(reqmass)+" "+ str(iso_selected[i])
+            label_text = "RAU"+str(reqmass)+" "+ str(label_for_legend[i])
             plt.plot(all_models['Ra02'][reqmass]['masscoord'],all_models['Ra02'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
                      ls='-', markersize=0.8, alpha=0.5, label=label_text)
             c += 1
     if 'lc' in rmodels:
         c=0
         for i in range(len(iso_selected)):
-            label_text = "LC"+str(reqmass)+" "+ str(iso_selected[i])
+            label_text = "LC"+str(reqmass)+" "+ str(label_for_legend[i])
             plt.plot(all_models['LC18'][reqmass]['masscoord'],all_models['LC18'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
                      ls='-', markersize=0.8, alpha=0.5, label=label_text)
             c += 1
     if 'law' in rmodels:
         c=0
         for i in range(len(iso_selected)):
-            label_text = "LAW"+str(reqmass)+" "+ str(iso_selected[i])
+            label_text = "LAW"+str(reqmass)+" "+ str(label_for_legend[i])
             plt.plot(all_models['La22'][reqmass]['masscoord'],all_models['La22'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
                      ls='-', markersize=0.8, alpha=0.5, label=label_text)
             c += 1
     if 'rit' in rmodels:
         c=0
         for i in range(len(iso_selected)):
-            label_text = "RIT"+str(reqmass)+" "+ str(iso_selected[i])
+            label_text = "RIT"+str(reqmass)+" "+ str(label_for_legend[i])
             plt.plot(all_models['Ri18'][reqmass]['masscoord'],all_models['Ri18'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
                      ls='-', markersize=0.8, alpha=0.5, label=label_text)
             c += 1
