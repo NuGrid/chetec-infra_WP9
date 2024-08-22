@@ -2,7 +2,7 @@
 
 
 ## Name
-SIMple PLot for Everyone (SIMPLE) - TBD
+SIMple PLot for Everyone (SIMPLE)
 
 ## Description
 Tool to compare the products from sets of published stellar models, including (but not limited to) core-collapse supernovae. 
