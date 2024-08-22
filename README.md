@@ -32,11 +32,11 @@ This is preliminarty version still under development, requiring more testing etc
 If interested to help, please get in touch with me (mpignatari@gmail.com)
 
 ## Authors 
-[Marco Pignatari](https://konkoly.hu/munkatarsak/pignatari-marco)
+@Konkoly Observatory (Budapest): [Marco Pignatari](https://konkoly.hu/munkatarsak/pignatari-marco) & [Gábor Balázs](https://www.facebook.com/GaborBalazsAstroPhoto/)
 
-[Georgy Makhatadze](https://www.ipgp.fr/en/directory/makhatadze/)
+@IPGP (Paris): [Georgy Makhatadze](https://www.ipgp.fr/en/directory/makhatadze/)
 
-[Matthias Ek](https://eaps.ethz.ch/en/people/profile.MTkyMTc0.TGlzdC83NzMsOTI0MjA1OTI2.html)
+@ETH (Zurich): [Matthias Ek](https://eaps.ethz.ch/en/people/profile.MTkyMTc0.TGlzdC83NzMsOTI0MjA1OTI2.html)
 
 ## Acknowledgment
 This work was supported by the European Union's Horizon 2020 research and innovation programme (ChETEC-INFRA -- Project no. 101008324), by the IReNA network (US NSF AccelNet) and by the CaNPAN network.
