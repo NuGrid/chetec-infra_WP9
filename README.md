@@ -32,7 +32,7 @@ This is preliminarty version still under development, requiring more testing etc
 If interested to help, please get in touch with me (mpignatari@gmail.com)
 
 ## Authors 
-TBD
+[Marco Pignatari](https://konkoly.hu/munkatarsak/pignatari-marco)
 
 ## Acknowledgment
 This work was supported by the European Union's Horizon 2020 research and innovation programme (ChETEC-INFRA -- Project no. 101008324), by the IReNA network (US NSF AccelNet) and by the CaNPAN network.
