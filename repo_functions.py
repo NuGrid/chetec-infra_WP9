@@ -977,91 +977,20 @@ def load_stellar_data(data_dir,check_data_file,reqmass,iso_list,e_label):
 #
 
 # utility function to generate automatically CCSN ejecta zone structure in abundance plots (e.g., mass fractions vs mass coordinates). see e.g., Meyer+ 1995
-def structure(all_models, reqmass, rmodels, y2):
+def structure(all_models, reqmass, rmodel, y2):
 
-    #'Ri18', 'Pi16', 'La22', 'Si18', 'LC18', 'Ra02'
-    if 'pgn' in rmodels:
-        mass = all_models['Pi16'][reqmass]['masscoord']
-        he4  = all_models['Pi16'][reqmass]['abu']['He-4']
-        c12  = all_models['Pi16'][reqmass]['abu']['C-12'] 
-        ne20 = all_models['Pi16'][reqmass]['abu']['Ne-20'] 
-        o16  = all_models['Pi16'][reqmass]['abu']['O-16'] 
-        si28 = all_models['Pi16'][reqmass]['abu']['Si-28'] 
-        n14  = all_models['Pi16'][reqmass]['abu']['N-14'] 
-        ni56 = all_models['Pi16'][reqmass]['abu']['Ni-56'] 
-        masscut = mass[0]
-        massmax = mass[-1]
-        print("m_cut: "+str(masscut))
-        print("massmax: "+str(massmax))
-    if 'sie' in rmodels:
-        mass = all_models['Si18'][reqmass]['masscoord']
-        he4  = all_models['Si18'][reqmass]['abu']['He-4']
-        c12  = all_models['Si18'][reqmass]['abu']['C-12'] 
-        ne20 = all_models['Si18'][reqmass]['abu']['Ne-20'] 
-        o16  = all_models['Si18'][reqmass]['abu']['O-16'] 
-        si28 = all_models['Si18'][reqmass]['abu']['Si-28'] 
-        n14  = all_models['Si18'][reqmass]['abu']['N-14'] 
-        ni56 = all_models['Si18'][reqmass]['abu']['Ni-56'] 
-
-        masscut = mass[0]
-        massmax = mass[-1]
-        print("m_cut: "+str(masscut))
-        print("massmax: "+str(massmax))
-    if 'rau' in rmodels:
-        mass = all_models['Ra02'][reqmass]['masscoord']
-        he4  = all_models['Ra02'][reqmass]['abu']['He-4']
-        c12  = all_models['Ra02'][reqmass]['abu']['C-12'] 
-        ne20 = all_models['Ra02'][reqmass]['abu']['Ne-20'] 
-        o16  = all_models['Ra02'][reqmass]['abu']['O-16'] 
-        si28 = all_models['Ra02'][reqmass]['abu']['Si-28'] 
-        n14  = all_models['Ra02'][reqmass]['abu']['N-14'] 
-        ni56 = all_models['Ra02'][reqmass]['abu']['Ni-56'] 
-
-        masscut = mass[0]
-        massmax = mass[-1]
-        print("m_cut: "+str(masscut))
-        print("massmax: "+str(massmax))
-    if 'lc' in rmodels:
-        mass = all_models['LC18'][reqmass]['masscoord']
-        he4  = all_models['LC18'][reqmass]['abu']['He-4']
-        c12  = all_models['LC18'][reqmass]['abu']['C-12'] 
-        ne20 = all_models['LC18'][reqmass]['abu']['Ne-20'] 
-        o16  = all_models['LC18'][reqmass]['abu']['O-16'] 
-        si28 = all_models['LC18'][reqmass]['abu']['Si-28'] 
-        n14  = all_models['LC18'][reqmass]['abu']['N-14'] 
-        ni56 = all_models['LC18'][reqmass]['abu']['Ni-56'] 
-
-        masscut = mass[0]
-        massmax = mass[-1]
-        print("m_cut: "+str(masscut))
-        print("massmax: "+str(massmax))
-    if 'law' in rmodels:
-        mass = all_models['La22'][reqmass]['masscoord']
-        he4  = all_models['La22'][reqmass]['abu']['He-4']
-        c12  = all_models['La22'][reqmass]['abu']['C-12'] 
-        ne20 = all_models['La22'][reqmass]['abu']['Ne-20'] 
-        o16  = all_models['La22'][reqmass]['abu']['O-16'] 
-        si28 = all_models['La22'][reqmass]['abu']['Si-28'] 
-        n14  = all_models['La22'][reqmass]['abu']['N-14'] 
-        ni56 = all_models['La22'][reqmass]['abu']['Ni-56'] 
-        masscut = mass[0]
-        massmax = mass[-1]
-        print("m_cut: "+str(masscut))
-        print("massmax: "+str(massmax))
-    if 'rit' in rmodels:
-        mass = all_models['Ri18'][reqmass]['masscoord']
-        he4  = all_models['Ri18'][reqmass]['abu']['He-4']
-        c12  = all_models['Ri18'][reqmass]['abu']['C-12'] 
-        ne20 = all_models['Ri18'][reqmass]['abu']['Ne-20'] 
-        o16  = all_models['Ri18'][reqmass]['abu']['O-16'] 
-        si28 = all_models['Ri18'][reqmass]['abu']['Si-28'] 
-        n14  = all_models['Ri18'][reqmass]['abu']['N-14'] 
-        ni56 = all_models['Ri18'][reqmass]['abu']['Ni-56']
-        masscut = mass[0]
-        massmax = mass[-1]
-        print("m_cut: "+str(masscut))
-        print("massmax: "+str(massmax))
-    
+    mass = all_models[rmodel][reqmass]['masscoord']
+    he4  = all_models[rmodel][reqmass]['abu']['He-4']
+    c12  = all_models[rmodel][reqmass]['abu']['C-12'] 
+    ne20 = all_models[rmodel][reqmass]['abu']['Ne-20'] 
+    o16  = all_models[rmodel][reqmass]['abu']['O-16'] 
+    si28 = all_models[rmodel][reqmass]['abu']['Si-28'] 
+    n14  = all_models[rmodel][reqmass]['abu']['N-14'] 
+    ni56 = all_models[rmodel][reqmass]['abu']['Ni-56'] 
+    masscut = mass[0]
+    massmax = mass[-1]
+    print("m_cut: "+str(masscut))
+    print("massmax: "+str(massmax))
 
     # definition of borders
     ih = np.where((he4 > 0.5))[0][-1]
@@ -1180,7 +1109,7 @@ def structure(all_models, reqmass, rmodels, y2):
 #
 # function generating a figure with abundance (in mass fractions) of selected isotopes vs mass fractions, using the function structure.
 #
-def abundanceplot(rmodels, iso_selected, reqmass, all_models, title_abundance_plot, col, lin, x1=1, x2=10, y1=1e-10, y2=1, \
+def abundanceplot(rmodel, iso_selected, reqmass, all_models, title_abundance_plot, col, lin, x1=1, x2=10, y1=1e-10, y2=1, \
                   xlabel="Mass coordinate M$_{\odot}$", ylabel="Mass fraction", legendpos='outside',\
                   grid=0, abu_name='nosave', onion=True):
     
@@ -1193,50 +1122,12 @@ def abundanceplot(rmodels, iso_selected, reqmass, all_models, title_abundance_pl
     title = title_abundance_plot
     
     ifig=plt.figure(figsize=(9,6))
-    #'Ri18', 'Pi16', 'La22', 'Si18', 'LC18', 'Ra02'
-    if 'pgn' in rmodels:
-        c=0
-        for i in range(len(iso_selected)):
-            label_text = "PGN"+str(reqmass)+" "+ str(e_label_split[i][0])+str(e_label_split[i][1])
-            plt.semilogy(all_models['Pi16'][reqmass]['masscoord'],all_models['Pi16'][reqmass]['abu'][iso_selected[i]],marker=lin,\
-                         color=col[c], markersize=0.5, ls='-', label=label_text)
-            c += 1
-    if 'sie' in rmodels:
-        c=0
-        for i in range(len(iso_selected)):
-            label_text = "SIE"+str(reqmass)+" "+ str(e_label_split[i][0])+str(e_label_split[i][1])
-            plt.semilogy(all_models['Si18'][reqmass]['masscoord'],all_models['Si18'][reqmass]['abu'][iso_selected[i]], color=col[c], marker=lin,\
-                         ls='-', markersize=0.5, alpha=0.95, label=label_text)
-            c += 1
-    if 'rau' in rmodels:
-        c=0
-        for i in range(len(iso_selected)):
-            label_text = "RAU"+str(reqmass)+", "+ str(e_label_split[i][0])+str(e_label_split[i][1])
-            plt.semilogy(all_models['Ra02'][reqmass]['masscoord'],all_models['Ra02'][reqmass]['abu'][iso_selected[i]], color=col[c], marker=lin,\
-                         ls='-', markersize=0.5, alpha=1, label=label_text)
-            c += 1
-    if 'lc' in rmodels:
-        c=0
-        for i in range(len(iso_selected)):
-            label_text = "LC"+str(reqmass)+" "+ str(e_label_split[i][0])+str(e_label_split[i][1])
-            plt.semilogy(all_models['LC18'][reqmass]['masscoord'],all_models['LC18'][reqmass]['abu'][iso_selected[i]], color=col[c], marker=lin,\
-                         ls='-', markersize=0.5, alpha=0.95, label=label_text)
-            c += 1
-    if 'law' in rmodels:
-        c=0
-        for i in range(len(iso_selected)):
-            label_text = "LAW"+str(reqmass)+" "+ str(e_label_split[i][0])+str(e_label_split[i][1])
-            plt.semilogy(all_models['La22'][reqmass]['masscoord'],all_models['La22'][reqmass]['abu'][iso_selected[i]], color=col[c], marker=lin,\
-                         ls='-', markersize=0.5, alpha=0.5, label=label_text)
-            c += 1
-    if 'rit' in rmodels:
-        c=0
-        for i in range(len(iso_selected)):
-            label_text = "RIT"+str(reqmass)+" "+ str(e_label_split[i][0])+str(e_label_split[i][1])
-            plt.semilogy(all_models['Ri18'][reqmass]['masscoord'],all_models['Ri18'][reqmass]['abu'][iso_selected[i]], color=col[c], marker=lin,\
-                         markersize=0.5, ls='-', label=label_text)
-            c += 1
-    
+
+    for i in range(len(iso_selected)):
+        label_text = rmodel+" "+str(reqmass)+" "+ str(e_label_split[i][0])+str(e_label_split[i][1])
+        plt.semilogy(all_models[rmodel][reqmass]['masscoord'],all_models[rmodel][reqmass]['abu'][iso_selected[i]],marker=lin,\
+                     color=col[i], markersize=0.5, ls='-', label=label_text)        
+
     plt.grid(alpha=grid)
     plt.xlabel(xlabel,fontweight='bold', fontsize=17)
     plt.ylabel(ylabel,fontweight='bold', fontsize=17)
@@ -1248,7 +1139,7 @@ def abundanceplot(rmodels, iso_selected, reqmass, all_models, title_abundance_pl
     plt.gca().yaxis.set_minor_locator(LogLocator(numticks=999, subs='auto'))
     
     if onion==True:
-        xl1,xl2 = structure(all_models, reqmass, rmodels, y2)
+        xl1,xl2 = structure(all_models, reqmass, rmodel, y2)
         plt.xlim(xl1,xl2)
     else:
         plt.xlim(x1,x2)
@@ -1271,7 +1162,7 @@ def abundanceplot(rmodels, iso_selected, reqmass, all_models, title_abundance_pl
 #
 # function generating a figure with slopes of selected ratios, using the function structure.
 #
-def ratioplot(rmodels, iso_selected, reqmass, all_models, ylabel, label_for_legend, title, col, lin, x1=1 ,x2=10 ,y1=-15 ,y2=25, xlabel="Mass coordinate M$_{\odot}$",legendpos="inside",\
+def ratioplot(rmodel, iso_selected, reqmass, all_models, ylabel, label_for_legend, title, col, lin, x1=1 ,x2=10 ,y1=-15 ,y2=25, xlabel="Mass coordinate M$_{\odot}$",legendpos="inside",\
               grid=0,ratio_name="nosave", onion=True):
     
     from matplotlib.ticker import AutoMinorLocator
@@ -1280,49 +1171,10 @@ def ratioplot(rmodels, iso_selected, reqmass, all_models, ylabel, label_for_lege
 
     ifig2=plt.figure(figsize=(10,6))
         
-    #'Ri18', 'Pi16', 'La22', 'Si18', 'LC18', 'Ra02'
-    if 'pgn' in rmodels:
-        c=0
-        for i in range(len(iso_selected)):
-            label_text = "PGN"+str(reqmass)+" "+ str(label_for_legend[i])
-            plt.plot(all_models['Pi16'][reqmass]['masscoord'],all_models['Pi16'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
-                     ls='-', markersize=0.8, alpha=0.5, label=label_text)
-            c += 1
-    if 'sie' in rmodels:
-        c=0
-        for i in range(len(iso_selected)):
-            label_text = "SIE"+str(reqmass)+" "+ str(label_for_legend[i])
-            plt.plot(all_models['Si18'][reqmass]['masscoord'],all_models['Si18'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
-                     ls='-', markersize=0.8, alpha=0.5, label=label_text)
-            c += 1
-    if 'rau' in rmodels:
-        c=0
-        for i in range(len(iso_selected)):
-            label_text = "RAU"+str(reqmass)+" "+ str(label_for_legend[i])
-            plt.plot(all_models['Ra02'][reqmass]['masscoord'],all_models['Ra02'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
-                     ls='-', markersize=0.8, alpha=0.5, label=label_text)
-            c += 1
-    if 'lc' in rmodels:
-        c=0
-        for i in range(len(iso_selected)):
-            label_text = "LC"+str(reqmass)+" "+ str(label_for_legend[i])
-            plt.plot(all_models['LC18'][reqmass]['masscoord'],all_models['LC18'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
-                     ls='-', markersize=0.8, alpha=0.5, label=label_text)
-            c += 1
-    if 'law' in rmodels:
-        c=0
-        for i in range(len(iso_selected)):
-            label_text = "LAW"+str(reqmass)+" "+ str(label_for_legend[i])
-            plt.plot(all_models['La22'][reqmass]['masscoord'],all_models['La22'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
-                     ls='-', markersize=0.8, alpha=0.5, label=label_text)
-            c += 1
-    if 'rit' in rmodels:
-        c=0
-        for i in range(len(iso_selected)):
-            label_text = "RIT"+str(reqmass)+" "+ str(label_for_legend[i])
-            plt.plot(all_models['Ri18'][reqmass]['masscoord'],all_models['Ri18'][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
-                     ls='-', markersize=0.8, alpha=0.5, label=label_text)
-            c += 1
+    for i in range(len(iso_selected)):
+        label_text = rmodel+" "+str(reqmass)+" "+ str(label_for_legend[i])
+        plt.plot(all_models[rmodel][reqmass]['masscoord'],all_models[rmodel][reqmass]['slope'][iso_selected[i]], color=col[i], marker=lin,\
+                 ls='-', markersize=0.8, alpha=0.5, label=label_text)
             
     #plt.hlines(3.003,x1,x2)
     #x = np.linspace(x1, x2, 100)
@@ -1339,7 +1191,7 @@ def ratioplot(rmodels, iso_selected, reqmass, all_models, ylabel, label_for_lege
     plt.gca().yaxis.set_minor_locator(AutoMinorLocator())
     
     if onion==True:
-        xl1,xl2 = structure(all_models, reqmass, rmodels, y2)
+        xl1,xl2 = structure(all_models, reqmass, rmodel, y2)
         plt.xlim(xl1,xl2)
     else:
         plt.xlim(x1,x2)
