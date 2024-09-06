@@ -977,7 +977,7 @@ def load_stellar_data(data_dir,check_data_file,reqmass,iso_list,e_label):
 #
 
 # utility function to generate automatically CCSN ejecta zone structure in abundance plots (e.g., mass fractions vs mass coordinates). see e.g., Meyer+ 1995
-def structure(all_models, reqmass, rmodel, y2):
+def structure(all_models, reqmass, rmodel, y2, file_name_structure='file_name', write_structure_data=False):
 
     mass = all_models[rmodel][reqmass]['masscoord']
     he4  = all_models[rmodel][reqmass]['abu']['He-4']
@@ -992,36 +992,32 @@ def structure(all_models, reqmass, rmodel, y2):
     print("m_cut: "+str(masscut))
     print("massmax: "+str(massmax))
 
+    si_layer_log = False ; ni_layer_log = False # default, switched to true if they are found
     # definition of borders
     ih = np.where((he4 > 0.5))[0][-1]
     print("Lower boundary of the H shell: "+str(mass[ih]))
 
-    #ihe1 = np.where((n14 < o16) & (n14 < c12) & (n14 < 1.e-3))[0][-1]
     ihe1 = np.where((n14 > o16) & (n14 > c12) & (n14 > 1.e-3))[0][0]
     print("Lower boundary of the He/N shell: "+str(mass[ihe1]))
 
     ihe = np.where((c12 > he4) & (mass <= mass[ih]))[0][-1]
     print("Lower boundary of the He/C shell: "+str(mass[ihe]))
 
-    #ic2 = np.where((c12 > 1.e-1)&(c12 > ne20))[0][0]
     ic2 = np.where((c12 > ne20)&(si28<c12)&(c12> 8.e-2))[0][0]
     print("Lower boundary of the O/C shell: "+str(mass[ic2]))
 
-    #ine = np.where((ne20 > 1.e-3) & (si28 < ne20) & (ne20 > c12) & (mass > masscut))[0][0]
     ine = np.where((ne20 > 1.e-3) & (si28 < ne20) & (ne20 > c12))[0][0]
     if ine>ic2:
         ine=ic2
     print("Lower boundary of the O/Ne shell: "+str(mass[ine]))
 
-    #io = np.where((he4 < 1.e-3) & (c12 < 5.e-3) & (ne20 < 5.e-3) & (o16 < 5.e-3))[0][-1]
-    #io = np.where((si28 < o16)& (o16 > 5.e-3) & (mass > masscut))[0][0]
     io = np.where((si28 < o16) & (o16 > 5.e-3))[0][0]
-    #io = np.where((si28 < o16) & (mass > masscut))[0][0]
     print("Lower boundary of the O/Si layer: "+str(mass[io]))
 
     try:
         isi = np.where((ni56 > si28))[0][-1]
         print("Lower boundary of the Si layer: "+str(mass[isi]))
+        si_layer_log = True
     except IndexError:
         isi=0
         print("No lower boundary of Si layer")
@@ -1029,10 +1025,31 @@ def structure(all_models, reqmass, rmodel, y2):
     try:
         ini = np.where((ni56 > si28) & (mass > masscut))[0][0]
         print("Lower boundary of the Ni layer: "+str(mass[ini]))
+        ni_layer_log = True
     except IndexError:
         ini=0.2
         print("No Ni layer")
 
+    # write structure data in a file for use outside simple:
+    if write_structure_data:
+        file_ = open(file_name_structure,'a')
+        file_.write('source: '+rmodel+'\n')
+        file_.write('initial mass (Msun): '+str(reqmass)+'\n')
+        file_.write('outer mass coordinate:            '+str('%6E' % massmax)+' : # \n')
+        file_.write('Lower boundary of the H shell:    '+str('%6E' % mass[ih])+' : H \n')
+        file_.write('Lower boundary of the He/N shell: '+str('%6E' % mass[ihe1])+' : He/N \n')
+        file_.write('Lower boundary of the He/C shell: '+str('%6E' % mass[ihe])+' : He/C \n')
+        file_.write('Lower boundary of the O/C shell:  '+str('%6E' % mass[ic2])+' : O/C \n')
+        file_.write('Lower boundary of the O/Ne shell: '+str('%6E' % mass[ine])+' : O/Ne \n')
+        file_.write('Lower boundary of the O/Si layer: '+str('%6E' % mass[io])+' : O/Si \n')
+        if si_layer_log:
+            file_.write('Lower boundary of the Si layer:   '+str('%6E' % mass[isi])+' : Si \n')
+        if ni_layer_log:
+            file_.write('Lower boundary of the Ni layer:   '+str('%6E' % mass[ini])+' : Ni \n')
+        file_.write('masscut:                          '+str('%6E' % masscut)+' : # \n')
+        file_.write('############# \n')
+        file_.close()
+        
     # plot limits
     xl1 = masscut-0.25
     xl2 = np.round(massmax,1)
@@ -1111,7 +1128,7 @@ def structure(all_models, reqmass, rmodel, y2):
 #
 def abundanceplot(rmodel, iso_selected, reqmass, all_models, title_abundance_plot, col, lin, x1=1, x2=10, y1=1e-10, y2=1, \
                   xlabel="Mass coordinate M$_{\odot}$", ylabel="Mass fraction", legendpos='outside',\
-                  grid=0, abu_name='nosave', onion=True):
+                  grid=0, abu_name='nosave', file_name_structure='name_file', onion=True, write_structure_data=True, show_plot=True):
     
 
     from matplotlib.ticker import AutoMinorLocator
@@ -1139,7 +1156,7 @@ def abundanceplot(rmodel, iso_selected, reqmass, all_models, title_abundance_plo
     plt.gca().yaxis.set_minor_locator(LogLocator(numticks=999, subs='auto'))
     
     if onion==True:
-        xl1,xl2 = structure(all_models, reqmass, rmodel, y2)
+        xl1,xl2 = structure(all_models, reqmass, rmodel, y2, file_name_structure=file_name_structure, write_structure_data=True)
         plt.xlim(xl1,xl2)
     else:
         plt.xlim(x1,x2)
@@ -1154,7 +1171,10 @@ def abundanceplot(rmodel, iso_selected, reqmass, all_models, title_abundance_plo
     if abu_name != 'nosave':
         plt.savefig(abu_name, bbox_inches='tight', pad_inches=0.1,dpi=300)
 
-    plt.show()
+    if show_plot:
+        plt.show(); 
+    else: 
+        plt.close(ifig)
     return()
 
 
@@ -1191,7 +1211,8 @@ def ratioplot(rmodel, iso_selected, reqmass, all_models, ylabel, label_for_legen
     plt.gca().yaxis.set_minor_locator(AutoMinorLocator())
     
     if onion==True:
-        xl1,xl2 = structure(all_models, reqmass, rmodel, y2)
+        file_name_structure = 'not_used'
+        xl1,xl2 = structure(all_models, reqmass, rmodel, y2, file_name_structure=file_name_structure, write_structure_data=False)
         plt.xlim(xl1,xl2)
     else:
         plt.xlim(x1,x2)
