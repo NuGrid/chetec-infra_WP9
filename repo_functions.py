@@ -488,7 +488,7 @@ def func_species_deck(string_set,abundance,iso_list_spec,iso_list_master):
         try:
             dum.append(abundance[iso_list_spec.index(i)])
         except ValueError:
-            dum.append(0.)
+            dum.append(np.array(abundance[0])*0.)
             print(string_set,', missing isotope set to zero: ',i)
     
     return(dum)
