@@ -1053,10 +1053,11 @@ def structure(all_models, reqmass, rmodel, y2, file_name_structure='file_name', 
     # plot limits
     xl1 = masscut-0.25
     xl2 = np.round(massmax,1)
+    xln = np.round(massmax,1)
     
     #remnant
     plt.gca().axvline(x = masscut, color = 'black', linestyle = ':',lw=2, alpha=0.75)
-    plt.gca().text((((xl1+masscut)/2)), y2+0.3,r'M$_{\rm rem}$',fontsize=10.,color='black',horizontalalignment='center')
+    plt.gca().text((((xl1+masscut)/2)), y2*1.3,r'M$_{\rm rem}$',fontsize=10.,color='black',horizontalalignment='center')
     plt.gca().fill_between([xl1,masscut],[-1.e10,-1.e10],[1.e10,1.e10],color='gray',alpha=0.5)
     
     #Convective envelope
@@ -1065,24 +1066,25 @@ def structure(all_models, reqmass, rmodel, y2, file_name_structure='file_name', 
         plt.gca().axvline(x = mass[ih], color = 'black', linestyle = '--',lw=2, alpha=0.75)
         plt.gca().fill_between([mass[ih],xl2],[-1.e10,-1.e10],[1.e10,1.e10],color='lightblue',alpha=0.25)
         if np.round(mass[ih],2)!=np.round(massmax,2):
-            plt.gca().text((((mass[ih]+xl2)/2)), y2+0.3,'H',fontsize=10.,color='black',horizontalalignment='center')
+            plt.gca().text((((mass[ih]+xl2)/2)), y2*1.3,'H',fontsize=10.,color='black',horizontalalignment='center')
             
     #He/N layer
     if mass[ihe]+0.05<massmax:
         plt.gca().axvline(x = mass[ihe], color = 'black', linestyle = '--',lw=2, alpha=0.75)
         if mass[ih]==massmax:
-            xl2=np.round(mass[ihe1]+0.5)
-            plt.gca().text((((int(xl2)+mass[ihe1])/2)), y2+0.3,'He/N',fontsize=10.,color='black',horizontalalignment='center')
+            xl2=np.round(mass[ihe1]+0.3,1)
+            plt.gca().text((((xl2+mass[ihe1])/2)), y2*1.3,'He/N',fontsize=10.,color='black',horizontalalignment='center')
         else:
-            plt.gca().text((((mass[ih]+mass[ihe1])/2)), y2+0.3,'He/N',fontsize=10.,color='black',horizontalalignment='center')
-    
+            plt.gca().text((((mass[ih]+mass[ihe1])/2)), y2*1.3,'He/N',fontsize=10.,color='black',horizontalalignment='center')
+
     #He/C layer
-    if mass[ihe1]+0.05<massmax:
+    if mass[ihe1]+0.04<massmax:
         plt.gca().axvline(x = mass[ihe1], color = 'black', linestyle = '--',lw=2, alpha=0.75)
-        plt.gca().text((((mass[ihe]+mass[ihe1])/2)), y2+0.3,'He/C',fontsize=10.,color='black',horizontalalignment='center')
+        plt.gca().text((((mass[ihe]+mass[ihe1])/2)), y2*1.3,'He/C',fontsize=10.,color='black',horizontalalignment='center')
         if mass[ih]+0.05>massmax and mass[ihe]+0.05<massmax:
-            xl2=np.round(mass[ihe1]+0.5,1)
-            plt.gca().text((((mass[int(xl2)]+mass[ic2])/2)), y2+0.3,'He/C',fontsize=10.,color='black',horizontalalignment='center')
+            if ihe-ic2<0.2:
+                xl2=np.round(mass[ihe1]+0.5,1)
+                plt.gca().text((((int(xl2)+mass[ic2])/2)), y2*1.3,'He/C',fontsize=10.,color='black',horizontalalignment='center')
     
     plt.gca().axvline(x = mass[ic2], color = 'black', linestyle = '--',lw=2, alpha=0.75)
     
@@ -1090,7 +1092,7 @@ def structure(all_models, reqmass, rmodel, y2, file_name_structure='file_name', 
     #max_value = max([mass[ic2], masscut, mass[ine]])
     if np.abs(mass[ic2]-mass[ine])>0.05:
         plt.gca().axvline(x = mass[ine], color = 'black', linestyle = '--',lw=2, alpha=0.75)
-        plt.gca().text((((mass[ic2]+max(mass[ine],masscut))/2)), y2+0.3,'O/Ne',fontsize=10.,color='black',horizontalalignment='center')
+        plt.gca().text((((mass[ic2]+max(mass[ine],masscut))/2)), y2*1.3,'O/Ne',fontsize=10.,color='black',horizontalalignment='center')
         plt.gca().fill_between([max(mass[ine],masscut),mass[ic2]],[-1.e10,-1.e10],[1.e10,1.e10],color='lightblue',alpha=0.25)
     
     plt.gca().axvline(x = mass[io], color = 'black', linestyle = '--',lw=2, alpha=0.75)
@@ -1099,25 +1101,28 @@ def structure(all_models, reqmass, rmodel, y2, file_name_structure='file_name', 
     plt.gca().fill_between([mass[ihe],mass[ihe1]],[-1.e10,-1.e10],[1.e10,1.e10],color='lightblue',alpha=0.25)
 
     
-    plt.gca().text((((max(mass[ic2],masscut)+mass[ihe])/2)), y2+0.3,'O/C',fontsize=10.,color='black',horizontalalignment='center')
+    plt.gca().text((((max(mass[ic2],masscut)+mass[ihe])/2)), y2*1.3,'O/C',fontsize=10.,color='black',horizontalalignment='center')
         
     if(mass[io]>masscut and mass[io]-masscut>0.05):
-        plt.gca().text((((mass[ine]+mass[io])/2)), y2+0.3,'O/Si',fontsize=10.,color='black',horizontalalignment='center')
+        plt.gca().text((((mass[ine]+mass[io])/2)), y2*1.3,'O/Si',fontsize=10.,color='black',horizontalalignment='center')
     elif (mass[ine]-masscut>0.05):
-        plt.gca().text((((mass[ine]+masscut)/2)), y2+0.3,'O/Si',fontsize=10.,color='black',horizontalalignment='center')
+        plt.gca().text((((mass[ine]+masscut)/2)), y2*1.3,'O/Si',fontsize=10.,color='black',horizontalalignment='center')
     
     #Si layer
     if(mass[io]>masscut):
         if(mass[isi]>masscut):
-            plt.gca().text((((mass[io]+mass[isi])/2)), y2+0.3,'Si',fontsize=10.,color='black',horizontalalignment='center')
+            plt.gca().text((((mass[io]+mass[isi])/2)), y2*1.3,'Si',fontsize=10.,color='black',horizontalalignment='center')
             plt.gca().fill_between([mass[isi],mass[io]],[-1.e10,-1.e10],[1.e10,1.e10],color='lightblue',alpha=0.25) #silicon
         elif (mass[io]-masscut>0.05):
-            plt.gca().text((((mass[io]+masscut)/2)), y2+0.3,'Si',fontsize=10.,color='black',horizontalalignment='center')
+            plt.gca().text((((mass[io]+masscut)/2)), y2*1.3,'Si',fontsize=10.,color='black',horizontalalignment='center')
             plt.gca().fill_between([mass[io],masscut],[-1.e10,-1.e10],[1.e10,1.e10],color='lightblue',alpha=0.25) #silicon
     
     #Ni layer
     if(mass[isi]>masscut):
-        plt.gca().text((((mass[ini]+mass[isi])/2)), y2+0.3,'Ni',fontsize=10.,color='black',horizontalalignment='center')
+        plt.gca().text((((mass[ini]+mass[isi])/2)), y2*1.3,'Ni',fontsize=10.,color='black',horizontalalignment='center')
+
+    if(xl2-xln>0.3):
+        xl2 = np.round(massmax,1)+0.1
         
         
     return(xl1,xl2)        
